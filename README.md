@@ -1,2 +1,2 @@
 # new_pytest_needle
-pytest plugin for visual regression testing  https://pytest-needle.readthedocs.io
+This is implementation of pytest-needle (pytest plugin for visual regression testing  https://pytest-needle.readthedocs.io)
