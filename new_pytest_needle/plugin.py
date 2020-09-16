@@ -10,7 +10,7 @@ import os
 import pytest
 from new_pytest_needle.driver import DEFAULT_BASELINE_DIR, DEFAULT_OUTPUT_DIR, DEFAULT_ENGINE, \
     DEFAULT_VIEWPORT_SIZE, DEFAULT_BROWSER, NeedleDriver
-from pytest_needle.exceptions import ImageMismatchException
+from new_pytest_needle.exceptions import ImageMismatchException
 
 
 def pytest_addoption(parser):
@@ -121,7 +121,6 @@ def needle(request):
     """Visual regression testing fixture
 
     :param request: pytest request
-    :param driver_factory: Selenium web driver
     :return:
     """
 

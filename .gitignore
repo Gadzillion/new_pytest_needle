@@ -153,5 +153,5 @@ ENV/
 # Ignore screenshots folder
 /screenshots
 /test/screenshots
-
+requirements.txt
 .DS_Store
