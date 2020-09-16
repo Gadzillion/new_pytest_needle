@@ -1,36 +1,29 @@
-"""setup.py
+"""new_pytest_needle
 
-.. codeauthor:: John Lane <jlane@fanthreesixty.com>
+.. codeauthor:: P.Serega
 
 """
 
+from setuptools import setup
 import os
 from setuptools import setup
 from pytest_needle import __author__, __email__, __license__, __version__
 
 
-# Utility function to read the README file.
-# Used for the long_description.  It's nice, because now 1) we have a top level
-# README file and 2) it's easier to type in the README file than to put a raw
-# string in below ...
 def read(filename):
     return open(os.path.join(os.path.dirname(__file__), filename)).read()
 
 
-setup(name='pytest-needle',
+setup(name='new_pytest_needle',
       version=__version__,
       author=__author__,
       author_email=__email__,
-      description='pytest plugin for visual testing websites using selenium',
+      description='VT pytest + selenium',
       license=__license__,
-      keywords='py.test pytest needle imagemagick perceptualdiff pil selenium visual',
-      url=u'https://github.com/jlane9/pytest-needle',
-      project_urls={
-          "Documentation": "https://pytest-needle.readthedocs.io/en/latest/",
-          "Tracker": "https://github.com/jlane9/pytest-needle/issues"
-      },
-      packages=['pytest_needle'],
-      entry_points={'pytest11': ['needle = pytest_needle.plugin', ]},
+      keywords='pytest needle imagemagick Pillow selenium VT',
+      url=u'https://github.com/Gadzillion/new_pytest_needle',
+      packages=['new_pytest_needle'],
+      entry_points={'pytest11': ['needle = new_pytest_needle.plugin', ]},
       long_description=read("README.md"),
       long_description_content_type="text/markdown",
       install_requires=[
@@ -72,3 +65,29 @@ setup(name='pytest-needle',
           'Topic :: Software Development :: Testing',
           'Topic :: Utilities'
       ])
+
+setup(
+    name='new_pytest_needle',
+    version='0.0.1',
+    description='VT Python package',
+    url='https://github.com/Gadzillion/pytest-needle',
+    author='Sergey P',
+    author_email='serjojo1@gmail.com',
+    license='BSD 2-clause',
+    packages=['pyexample'],
+    install_requires=['mpi4py>=2.0',
+                      'numpy',
+                      ],
+
+    classifiers=[
+        'Development Status :: 1 - Planning',
+        'Intended Audience :: Science/Research',
+        'License :: OSI Approved :: BSD License',
+        'Operating System :: POSIX :: Linux',
+        'Programming Language :: Python :: 2',
+        'Programming Language :: Python :: 2.7',
+        'Programming Language :: Python :: 3',
+        'Programming Language :: Python :: 3.4',
+        'Programming Language :: Python :: 3.5',
+    ],
+)
