@@ -15,7 +15,7 @@ import time
 import pytest
 import allure
 from contextlib import contextmanager
-from pytest_needle.exceptions import *
+from new_pytest_needle.exceptions import *
 from PIL import Image, ImageDraw, ImageColor
 from needle.cases import import_from_string
 from needle.engines.pil_engine import ImageDiff
@@ -28,21 +28,10 @@ from selenium.webdriver.support.expected_conditions import staleness_of
 import pathlib
 from new_pytest_needle.exceptions import MissingBaselineException
 from new_pytest_needle.settings import PROJECT_DIR
+from io import BytesIO as IOClass
 
-if sys.version_info >= (3, 0):
-
-    from io import BytesIO as IOClass
-
-    # Ignoring since basetring is not redefined if running on python3
-    basestring = str  # pylint: disable=W0622,C0103
-
-else:
-    try:
-        from cStringIO import StringIO as IOClass
-    except ImportError:
-        from io import StringIO as IOClass
-
-
+basestring = str  # pylint: disable=W0622,C0103
+`
 DEFAULT_BASELINE_DIR = os.path.realpath(os.path.join(os.getcwd(), 'screenshots', 'baseline'))
 DEFAULT_LANDING_BASELINE_DIR = os.path.realpath(os.path.join(os.getcwd(), 'l_screenshots', 'baseline'))
 DEFAULT_OUTPUT_DIR = os.path.realpath(os.path.join(os.getcwd(), 'screenshots'))
