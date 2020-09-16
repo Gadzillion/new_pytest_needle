@@ -9,7 +9,6 @@ from errno import EEXIST
 import math
 import os
 import io
-import sys
 import re
 import time
 import pytest
@@ -31,7 +30,7 @@ from new_pytest_needle.settings import PROJECT_DIR
 from io import BytesIO as IOClass
 
 basestring = str  # pylint: disable=W0622,C0103
-`
+
 DEFAULT_BASELINE_DIR = os.path.realpath(os.path.join(os.getcwd(), 'screenshots', 'baseline'))
 DEFAULT_LANDING_BASELINE_DIR = os.path.realpath(os.path.join(os.getcwd(), 'l_screenshots', 'baseline'))
 DEFAULT_OUTPUT_DIR = os.path.realpath(os.path.join(os.getcwd(), 'screenshots'))
