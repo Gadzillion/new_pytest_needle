@@ -25,10 +25,9 @@ from selenium.webdriver.chrome.options import Options as ChromeOptions
 from selenium.webdriver.firefox.options import Options as FirefoxOptions
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support.expected_conditions import staleness_of
-from io import BytesIO as IOClass
 import pathlib
-from pytest_needle.exceptions import MissingBaselineException
-from settings import PROJECT_DIR
+from new_pytest_needle.exceptions import MissingBaselineException
+from new_pytest_needle.settings import PROJECT_DIR
 
 if sys.version_info >= (3, 0):
 

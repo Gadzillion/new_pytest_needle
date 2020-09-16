@@ -8,8 +8,8 @@ from __future__ import absolute_import
 import base64
 import os
 import pytest
-from pytest_needle.driver import DEFAULT_BASELINE_DIR, DEFAULT_OUTPUT_DIR, DEFAULT_ENGINE, \
-    DEFAULT_VIEWPORT_SIZE, DEFAULT_BROWSER,NeedleDriver
+from new_pytest_needle.driver import DEFAULT_BASELINE_DIR, DEFAULT_OUTPUT_DIR, DEFAULT_ENGINE, \
+    DEFAULT_VIEWPORT_SIZE, DEFAULT_BROWSER, NeedleDriver
 from pytest_needle.exceptions import ImageMismatchException
 
 
@@ -88,7 +88,6 @@ def pytest_runtest_makereport(item, call):
     for attachment in attachments:
 
         if os.path.exists(attachment[0]):
-
             report.extra.append(pytest_html.extras.image(
                 get_image_as_base64(attachment[0]),
                 attachment[1]
