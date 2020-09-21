@@ -486,42 +486,42 @@ class NeedleDriver(object):
 
     def _stop_animation(self):  # динамический элемент tradeth
         self.driver.execute_script(
-            "try { "
-            "   document.querySelectorAll('*').forEach(element => {element.style.transition = 'none';}) "
-            "} catch (err) { "
-            "   console.error(error);"
+            'try { '
+            '   document.querySelectorAll("*").forEach(element => {element.style.transition = "none";});'
+            '}'
+            'catch(e) {}'
         )
 
     def _disable_chat(self):  # чат
         self.driver.execute_script(
-            "try { "
-            "   document.querySelector('#launcher').remove()"
-            "} catch (err) { "
-            "   console.error(error);"
+            'try { '
+                'document.querySelector("#launcher").remove();'
+                '}'
+            'catch(e) {}'
         )
 
     def _stop_video(self):  # видео на заднем фоне
         self.driver.execute_script(
-            "try { "
-            "   document.querySelectorAll('.video').forEach(video => {video.pause(); video.currentTime = 0;});"
-            "} catch (err) { "
-            "   console.error(error);"
+            'try { '
+            '   document.querySelectorAll(".video").forEach(video => {video.pause(); video.currentTime = 0;})'
+            '}'
+            'catch(e) {}'
         )
 
     def _delete_ads(self):  # img google ads
         self.driver.execute_script(
-            "try { "
-            "   document.querySelectorAll('body > img').forEach(element => {element.remove();})"
-            "} catch (err) { "
-            "   console.error(error);"
+            'try { '
+            '   document.querySelectorAll("body > img").forEach(element => {element.remove();})'
+            '}'
+            'catch(e) {}'
         )
 
     def _hide_pops(self):  # GDPR pop-up
         self.driver.execute_script(
-            "try { "
-            "   document.querySelector('.js-gdpr-popup').remove()"
-            "} catch (err) { "
-            "   console.error(error);"
+            'try { '
+            '   document.querySelector(".js-gdpr-popup").remove();'
+            '}'
+            'catch(e) {}'
         )
 
     @property
