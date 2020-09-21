@@ -31,9 +31,13 @@ from io import BytesIO as IOClass
 
 basestring = str  # pylint: disable=W0622,C0103
 
-DEFAULT_BASELINE_DIR = os.path.realpath(os.path.join(os.getcwd(), 'screenshots', 'baseline'))
+DEFAULT_BASELINE_DIR = os.path.realpath(os.path.join(os.getcwd(), os.path.pardir, 'screenshots', 'baseline'))
+DEFAULT_BASELINE_DIR_REM = os.path.realpath(os.path.join(os.getcwd(), os.path.pardir,'screenshots'))
+DEFAULT_BASELINE_DIR_HAND = os.path.realpath(os.path.join(os.getcwd(),  os.path.pardir, 'test', 'screenshots', 'baseline'))
+DEFAULT_BASELINE_DIR_HAND_REM = os.path.realpath(os.path.join(os.getcwd(), os.path.pardir,'test', 'screenshots'))
 DEFAULT_LANDING_BASELINE_DIR = os.path.realpath(os.path.join(os.getcwd(), 'l_screenshots', 'baseline'))
-DEFAULT_OUTPUT_DIR = os.path.realpath(os.path.join(os.getcwd(), 'screenshots'))
+DEFAULT_OUTPUT_DIR = os.path.realpath(os.path.join(os.getcwd(), os.path.pardir, 'screenshots'))
+DEFAULT_DOCKER_DIR = "/builds/qa/layout-tests/screenshots"
 DEFAULT_ENGINE = 'needle.engines.imagemagick_engine.Engine'
 DEFAULT_VIEWPORT_SIZE = '1024x768'
 DEFAULT_BROWSER = 'chrome'
@@ -380,16 +384,16 @@ class NeedleDriver(object):
         if isinstance(baseline_image, basestring):
             try:
                 self.engine.assertSameFiles(fresh_image_file, baseline_image, threshold)
-
             except AssertionError as err:
-                msg = getattr(err, 'message', err.args[0] if err.args else "")
-                args = err.args[1:] if len(err.args) > 1 else []
-                raise ImageMismatchException(msg, baseline_image, fresh_image_file, args)
-            except EnvironmentError:
-                msg = "Missing baseline '{}'. Please run again with --needle-save-baseline".format(baseline_image)
-                raise MissingBaselineException(msg)
-            except ValueError as err:
                 raise err
+            #     msg = getattr(err, 'message', err.args[0] if err.args else "")
+            #     args = err.args[1:] if len(err.args) > 1 else []
+            #     raise ImageMismatchException(msg, baseline_image, fresh_image_file, args)
+            # except EnvironmentError:
+            #     msg = "Missing baseline '{}'. Please run again with --needle-save-baseline".format(baseline_image)
+            #     raise MissingBaselineException(msg)
+            # except ValueError as err:
+            #     raise err
             finally:
                 if self.cleanup_on_success:
                     os.remove(fresh_image_file)
@@ -400,51 +404,40 @@ class NeedleDriver(object):
             if distance > threshold:
                 pytest.fail('Fail: New screenshot did not match the baseline (by a distance of %.2f)' % distance)
 
-    def remove_img(self):
-        dir_name = None
-        if pathlib.Path(os.path.join(PROJECT_DIR, "screenshots")).exists():
-            dir_name = os.path.join(PROJECT_DIR, "screenshots")
-        elif pathlib.Path(os.path.join(PROJECT_DIR, "test", "screenshots")).exists():
-            dir_name = os.path.join(PROJECT_DIR, "test", "screenshots")
-        else:
-            dir_name = "/builds/qa/layout-tests/screenshots"
-        images = os.listdir(dir_name)
-        for item in images:
-            if item.endswith(".png"):
-                os.remove(os.path.join(dir_name, item))
-        # try:
-        #     dir_name = os.path.join(self.get_root_dir(), "screenshots")
-        #     images = os.listdir(dir_name)
-        #     for item in images:
-        #         if item.endswith(".png"):
-        #             os.remove(os.path.join(dir_name, item))
-        # except:
-        #     dir_name = "/builds/qa/layout-tests/screenshots"
-        #     images = os.listdir(dir_name)
-        #     for item in images:
-        #         if item.endswith(".png"):
-        #             os.remove(os.path.join(dir_name, item))
-
     @allure.step("Проводим сравнение screenshot'ов страницы {name}")
     def attach_img_allure(self, name, e):
-        diff_name = None
-        for d_name in [".diff.png", ".diff-0.png"]:
-            if os.path.exists(os.path.join(self.get_root_dir(), "screenshots", name + d_name)):
-                diff_name = d_name
-                break
 
-        img_file = os.path.join(self.get_root_dir(), "screenshots", name + diff_name)
-        self.zwait(os.path.exists(img_file))
-        img = Image.open(img_file, mode="r")
-        imgByteArr = io.BytesIO()
-        img.save(imgByteArr, format="PNG")
-        imgByteArr = imgByteArr.getvalue()
-        allure.attach(
-            body=imgByteArr,
-            name=name,
-            attachment_type=allure.attachment_type.PNG
-        )
-        raise e
+        # когда стравниваемые скриншоты отличаются по размеру (меньше чем для ошибки)
+        # imagemagick иногда обрезаемую часть сохраняет отдельной картинкой .diff-1.png
+        # для тестов была сделана выборка из ".diff.png" или ".diff-0.png"
+
+        if "did not match the baseline" in e.message:
+            img_file = None
+            done = False
+            for d_name in [".diff.png", ".diff-0.png"]:
+                for p_name in [DEFAULT_BASELINE_DIR_REM, DEFAULT_BASELINE_DIR_HAND_REM, DEFAULT_DOCKER_DIR]:
+                    img_name = os.path.join(p_name, name + d_name)
+                    if pathlib.Path(img_name).exists():
+                        done = True
+                        img_file = os.path.join(img_name)
+                        break
+                if done:
+                    break
+
+            if img_file is not None:
+                self.zwait(os.path.exists(img_file))
+                img = Image.open(img_file, mode="r")
+                imgByteArr = io.BytesIO()
+                img.save(imgByteArr, format="PNG")
+                imgByteArr = imgByteArr.getvalue()
+                allure.attach(
+                    body=imgByteArr,
+                    name=name,
+                    attachment_type=allure.attachment_type.PNG
+                )
+                raise e
+        else:
+            raise e
 
     @allure.step('Открываем страницу "{link}" на языке "{lang}"')
     def open_site_page_with_lang(self, cfg,  link: str, lang: str) -> str:
@@ -457,6 +450,9 @@ class NeedleDriver(object):
 
     def get_current_url(self):
         return self.driver.current_url
+
+    def get_current_dir(self):
+        return PROJECT_DIR
 
     def stal_el(self, cfg,  link: str, lang: str):
         with self._wait_for_staleness(timeout=5):
@@ -548,6 +544,12 @@ class NeedleDriver(object):
 
     def get_site_name(self, link, lang, width):
         return f'{link.replace("/", "_")}_{lang}_{width}'
+
+    def import_from_string(self, path):
+
+        module_name, klass = path.rsplit('.', 1)
+        module = __import__(module_name, fromlist=[klass])
+        return getattr(module, klass)
 
     def zwait(cond, msg: str = "", retries: int = 10, delay: float = 1.0):
         """

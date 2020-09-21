@@ -21,7 +21,6 @@ setuptools.setup(name='new_pytest_needle',
                  keywords=['pytest-needle', 'imagemagick', 'VT'],
                  packages=setuptools.find_packages(),
                  install_requires=[
-                     'needle',
                      'Pillow',
                      'pytest',
                      'pytest-cov',
