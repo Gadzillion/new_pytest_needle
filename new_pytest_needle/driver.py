@@ -486,40 +486,43 @@ class NeedleDriver(object):
 
     def _stop_animation(self):  # динамический элемент tradeth
         self.driver.execute_script(
-            "document.querySelectorAll('*').forEach(element => {element.style.transition = 'none';})"
+            "try { "
+            "   document.querySelectorAll('*').forEach(element => {element.style.transition = 'none';}) "
+            "} catch (err) { "
+            "   console.error(error);"
         )
 
     def _disable_chat(self):  # чат
-        try:
-            self.driver.execute_script(
-                "document.querySelector('#launcher').remove()"
-            )
-        except AssertionError:
-            pass
+        self.driver.execute_script(
+            "try { "
+            "   document.querySelector('#launcher').remove()"
+            "} catch (err) { "
+            "   console.error(error);"
+        )
 
     def _stop_video(self):  # видео на заднем фоне
-        try:
-            self.driver.execute_script(
-                "document.querySelectorAll('.video').forEach(video => {video.pause(); video.currentTime = 0;});"
-            )
-        except AssertionError:
-            pass
+        self.driver.execute_script(
+            "try { "
+            "   document.querySelectorAll('.video').forEach(video => {video.pause(); video.currentTime = 0;});"
+            "} catch (err) { "
+            "   console.error(error);"
+        )
 
     def _delete_ads(self):  # img google ads
-        try:
-            self.driver.execute_script(
-                "document.querySelectorAll('body > img').forEach(element => {element.remove();})"
-            )
-        except:
-            pass
+        self.driver.execute_script(
+            "try { "
+            "   document.querySelectorAll('body > img').forEach(element => {element.remove();})"
+            "} catch (err) { "
+            "   console.error(error);"
+        )
 
     def _hide_pops(self):  # GDPR pop-up
-        try:
-            self.driver.execute_script(
-                "document.querySelector('.js-gdpr-popup').remove()"
-            )
-        except AssertionError:
-            pass
+        self.driver.execute_script(
+            "try { "
+            "   document.querySelector('.js-gdpr-popup').remove()"
+            "} catch (err) { "
+            "   console.error(error);"
+        )
 
     @property
     def wait(self):
