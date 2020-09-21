@@ -3,7 +3,7 @@ import os
 
 from PIL import Image
 
-from needle.engines.base import EngineBase
+from new_pytest_needle.engines.base import EngineBase
 
 
 class Engine(EngineBase):

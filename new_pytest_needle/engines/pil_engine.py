@@ -9,7 +9,7 @@ else:
 
 from PIL import Image
 
-from needle.engines.base import EngineBase
+from new_pytest_needle.engines.base import EngineBase
 
 
 class Engine(EngineBase):
@@ -47,7 +47,7 @@ class ImageDiff(object):
         for a, b in izip(a_values, b_values):
             rmsd += (a - b) ** 2
         rmsd = math.sqrt(float(rmsd) / (
-            self.image_a.size[0] * self.image_a.size[1] * len(self.image_a.getbands())
+                self.image_a.size[0] * self.image_a.size[1] * len(self.image_a.getbands())
         ))
         return rmsd / 255
 

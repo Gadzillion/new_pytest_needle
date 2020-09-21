@@ -13,32 +13,32 @@ import re
 import time
 import pytest
 import allure
+import pathlib
 from contextlib import contextmanager
-from new_pytest_needle.exceptions import *
 from PIL import Image, ImageDraw, ImageColor
-from needle.cases import import_from_string
-from needle.engines.pil_engine import ImageDiff
+from new_pytest_needle.engines.pil_engine import ImageDiff
 from selenium import webdriver
 from selenium.webdriver.remote.webdriver import WebElement
 from selenium.webdriver.chrome.options import Options as ChromeOptions
 from selenium.webdriver.firefox.options import Options as FirefoxOptions
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support.expected_conditions import staleness_of
-import pathlib
-from new_pytest_needle.exceptions import MissingBaselineException
-from new_pytest_needle.settings import PROJECT_DIR
 from io import BytesIO as IOClass
 
 basestring = str  # pylint: disable=W0622,C0103
 
-DEFAULT_BASELINE_DIR = os.path.realpath(os.path.join(os.getcwd(), os.path.pardir, 'screenshots', 'baseline'))
-DEFAULT_BASELINE_DIR_REM = os.path.realpath(os.path.join(os.getcwd(), os.path.pardir,'screenshots'))
-DEFAULT_BASELINE_DIR_HAND = os.path.realpath(os.path.join(os.getcwd(),  os.path.pardir, 'test', 'screenshots', 'baseline'))
-DEFAULT_BASELINE_DIR_HAND_REM = os.path.realpath(os.path.join(os.getcwd(), os.path.pardir,'test', 'screenshots'))
+DEFAULT_BASELINE_DIR = os.path.realpath(os.path.join(os.getcwd(),
+                                                     os.path.pardir, 'screenshots', 'baseline'))
+DEFAULT_BASELINE_DIR_REM = os.path.realpath(os.path.join(os.getcwd(),
+                                                         os.path.pardir, 'screenshots'))
+DEFAULT_BASELINE_DIR_HAND = os.path.realpath(os.path.join(os.getcwd(),
+                                                          os.path.pardir, 'test', 'screenshots', 'baseline'))
+DEFAULT_BASELINE_DIR_HAND_REM = os.path.realpath(os.path.join(os.getcwd(),
+                                                              os.path.pardir, 'test', 'screenshots'))
 DEFAULT_LANDING_BASELINE_DIR = os.path.realpath(os.path.join(os.getcwd(), 'l_screenshots', 'baseline'))
 DEFAULT_OUTPUT_DIR = os.path.realpath(os.path.join(os.getcwd(), os.path.pardir, 'screenshots'))
 DEFAULT_DOCKER_DIR = "/builds/qa/layout-tests/screenshots"
-DEFAULT_ENGINE = 'needle.engines.imagemagick_engine.Engine'
+DEFAULT_ENGINE = 'new_pytest_needle.engines.imagemagick_engine.Engine'
 DEFAULT_VIEWPORT_SIZE = '1024x768'
 DEFAULT_BROWSER = 'chrome'
 
@@ -48,9 +48,9 @@ class NeedleDriver(object):
     """
 
     ENGINES = {
-        'pil': 'needle.engines.pil_engine.Engine',
+        'pil': 'new_pytest_needle.engines.pil_engine.Engine',
         'imagemagick': DEFAULT_ENGINE,
-        'perceptualdiff': 'needle.engines.perceptualdiff_engine.Engine'
+        'perceptualdiff': 'new_pytest_needle.engines.perceptualdiff_engine.Engine'
     }
 
     CHROME = "chrome"
@@ -61,8 +61,8 @@ class NeedleDriver(object):
 
         self.options = kwargs
 
-        def _set_options(options):
-            option_a = options
+        def _set_options(option_s):
+            option_a = option_s
             option_a.add_argument('--headless')
             option_a.add_argument('--no-sandbox')
             option_a.add_argument('--disable-gpu')
@@ -135,7 +135,6 @@ class NeedleDriver(object):
         """
 
         if isinstance(element, WebElement):
-
             # Get dimensions of element
             location = element.location
             size = element.size
@@ -157,7 +156,6 @@ class NeedleDriver(object):
         dimensions = self._get_element_dimensions(element)
 
         if dimensions:
-
             return (
                 dimensions['left'],
                 dimensions['top'],
@@ -177,10 +175,6 @@ class NeedleDriver(object):
 
         window_size = self.driver.get_window_size()
         return window_size['width'], window_size['height']
-
-    @property
-    def base_url(self):
-        return self._base_url
 
     @property
     def baseline_dir(self):
@@ -230,7 +224,7 @@ class NeedleDriver(object):
         :return:
         """
 
-        return import_from_string(self.engine_class)()
+        return self.import_from_string(self.engine_class)()
 
     @property
     def engine_class(self):
@@ -302,7 +296,6 @@ class NeedleDriver(object):
             dimensions = self._get_element_dimensions(element)
 
             if not image_size == (dimensions['width'], dimensions['height']):
-
                 ratio = self._get_ratio(image_size, window_size)
 
                 return image.crop([point * ratio for point in self._get_element_rect(element)])
@@ -386,14 +379,6 @@ class NeedleDriver(object):
                 self.engine.assertSameFiles(fresh_image_file, baseline_image, threshold)
             except AssertionError as err:
                 raise err
-            #     msg = getattr(err, 'message', err.args[0] if err.args else "")
-            #     args = err.args[1:] if len(err.args) > 1 else []
-            #     raise ImageMismatchException(msg, baseline_image, fresh_image_file, args)
-            # except EnvironmentError:
-            #     msg = "Missing baseline '{}'. Please run again with --needle-save-baseline".format(baseline_image)
-            #     raise MissingBaselineException(msg)
-            # except ValueError as err:
-            #     raise err
             finally:
                 if self.cleanup_on_success:
                     os.remove(fresh_image_file)
@@ -425,13 +410,13 @@ class NeedleDriver(object):
                     break
 
             if img_file is not None:
-                self.zwait(os.path.exists(img_file))
+                self.zwait(str(os.path.exists(img_file)))
                 img = Image.open(img_file, mode="r")
-                imgByteArr = io.BytesIO()
-                img.save(imgByteArr, format="PNG")
-                imgByteArr = imgByteArr.getvalue()
+                img_byte_arr = io.BytesIO()
+                img.save(img_byte_arr, format="PNG")
+                img_byte_arr = img_byte_arr.getvalue()
                 allure.attach(
-                    body=imgByteArr,
+                    body=img_byte_arr,
                     name=name,
                     attachment_type=allure.attachment_type.PNG
                 )
@@ -440,7 +425,7 @@ class NeedleDriver(object):
             raise e
 
     @allure.step('Открываем страницу "{link}" на языке "{lang}"')
-    def open_site_page_with_lang(self, cfg,  link: str, lang: str) -> str:
+    def open_site_page_with_lang(self, cfg, link: str, lang: str):
         self.driver.get(f"{cfg['web']['url']}{link}?lang={lang}")
         self._wait_for_load()
 
@@ -451,12 +436,9 @@ class NeedleDriver(object):
     def get_current_url(self):
         return self.driver.current_url
 
-    def get_current_dir(self):
-        return PROJECT_DIR
-
-    def stal_el(self, cfg,  link: str, lang: str):
+    def stale_el(self, cfg, link: str, lang: str):
         with self._wait_for_staleness(timeout=5):
-            self.open_site_page_with_lang(cfg,  link, lang)
+            self.open_site_page_with_lang(cfg, link, lang)
 
     def _wait_for_load(self):
         return self.wait(
@@ -472,6 +454,7 @@ class NeedleDriver(object):
 
     def _wait_for_hash(self, driver, sleep_time=2):
         '''Waits for page to completely load by comparing current page hash values.'''
+
         def get_page_hash(driver):
             # can find element by either 'html' tag or by the html 'root' id
             dom = driver.find_element_by_tag_name('html').get_attribute('innerHTML')
@@ -501,17 +484,17 @@ class NeedleDriver(object):
         self._delete_ads()
         self._hide_pops()
 
-    def _stop_animation(self):   # динамический элемент tradeth
+    def _stop_animation(self):  # динамический элемент tradeth
         self.driver.execute_script(
             "document.querySelectorAll('*').forEach(element => {element.style.transition = 'none';})"
         )
 
-    def _disable_chat(self): # чат
+    def _disable_chat(self):  # чат
         try:
             self.driver.execute_script(
                 "document.querySelector('#launcher').remove()"
             )
-        except:
+        except AssertionError:
             pass
 
     def _stop_video(self):  # видео на заднем фоне
@@ -519,10 +502,10 @@ class NeedleDriver(object):
             self.driver.execute_script(
                 "document.querySelectorAll('.video').forEach(video => {video.pause(); video.currentTime = 0;});"
             )
-        except:
+        except AssertionError:
             pass
 
-    def _delete_ads(self): # img google ads
+    def _delete_ads(self):  # img google ads
         try:
             self.driver.execute_script(
                 "document.querySelectorAll('body > img').forEach(element => {element.remove();})"
@@ -530,12 +513,12 @@ class NeedleDriver(object):
         except:
             pass
 
-    def _hide_pops(self): # GDPR pop-up
+    def _hide_pops(self):  # GDPR pop-up
         try:
             self.driver.execute_script(
                 "document.querySelector('.js-gdpr-popup').remove()"
             )
-        except:
+        except AssertionError:
             pass
 
     @property
@@ -546,6 +529,14 @@ class NeedleDriver(object):
         return f'{link.replace("/", "_")}_{lang}_{width}'
 
     def import_from_string(self, path):
+        """Recursively create a directory
+
+        .. note:: From needle
+            https://github.com/python-needle/needle/blob/master/needle/cases.py#L36
+
+        :param str path: engine to import
+        :return:
+        """
 
         module_name, klass = path.rsplit('.', 1)
         module = __import__(module_name, fromlist=[klass])
@@ -636,7 +627,7 @@ class NeedleDriver(object):
 
         return self.options.get('headless', True)
 
-    @save_baseline.setter
+    @headless.setter
     def headless(self, value):
         """Set headless flag
 

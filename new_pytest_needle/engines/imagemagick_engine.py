@@ -1,7 +1,7 @@
 import os
 import subprocess
 from pathlib import Path
-from needle.engines.base import EngineBase
+from new_pytest_needle.engines.base import EngineBase
 
 
 class Engine(EngineBase):
