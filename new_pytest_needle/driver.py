@@ -272,11 +272,6 @@ class NeedleDriver(object):
 
         return s_width, s_height
 
-    def get_root_dir(self):
-        """Gets string representation of project directory"""
-        return str(os.path.dirname(os.path.dirname(os.path.dirname(
-            os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))))))
-
     def get_screenshot(self, element=None):
         """Returns screenshot image
         :param WebElement element: Crop image to element (Optional)
@@ -375,13 +370,22 @@ class NeedleDriver(object):
 
         # Compare images
         if isinstance(baseline_image, basestring):
-            try:
-                self.engine.assertSameFiles(fresh_image_file, baseline_image, threshold)
-            except AssertionError as err:
-                raise err
-            finally:
-                if self.cleanup_on_success:
-                    os.remove(fresh_image_file)
+            # try:
+            value = self.engine.assertSameFiles(fresh_image_file, baseline_image, threshold)
+            if isinstance(value, float):
+                # if value <= threshold:
+                #     par_dif = Path(fresh_image_file)
+                #     filelist = [f for f in os.listdir(par_dif.parent) if f.endswith(".png")]
+                #     for f in filelist:
+                #         os.remove(os.path.join(par_dif.parent, f))
+                #     return
+                # else:
+                raise AssertionError("The new screenshot did not match the baseline. Diff: {difference}."
+                                     .format(difference=str(value * 100)))
+            else:
+                raise AssertionError(value)
+            # if self.cleanup_on_success:
+            #     os.remove(fresh_image_file)
         else:
             diff = ImageDiff(fresh_image, baseline_image)
             distance = abs(diff.get_distance())
@@ -396,7 +400,8 @@ class NeedleDriver(object):
         # imagemagick иногда обрезаемую часть сохраняет отдельной картинкой .diff-1.png
         # для тестов была сделана выборка из ".diff.png" или ".diff-0.png"
 
-        if "did not match the baseline" in e.message:
+        x = str(e)
+        if "did not match the baseline" in str(e):
             img_file = None
             done = False
             for d_name in [".diff.png", ".diff-0.png"]:
@@ -495,8 +500,8 @@ class NeedleDriver(object):
     def _disable_chat(self):  # чат
         self.driver.execute_script(
             'try { '
-                'document.querySelector("#launcher").remove();'
-                '}'
+            'document.querySelector("#launcher").remove();'
+            '}'
             'catch(e) {}'
         )
 

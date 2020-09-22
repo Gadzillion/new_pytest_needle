@@ -7,4 +7,4 @@
 __author__ = 'P.Serega'
 __email__ = 'serjojo1@gmail.com'
 __license__ = 'MIT'
-__version__ = '0.0.5'
+__version__ = '0.0.6'
