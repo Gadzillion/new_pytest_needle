@@ -277,7 +277,7 @@ class NeedleDriver(object):
         :param WebElement element: Crop image to element (Optional)
         :return:
         """
-
+        time.sleep(2)
         stream = IOClass(base64.b64decode(self.driver.get_screenshot_as_base64().encode('ascii')))
         image = Image.open(stream).convert('RGB')
 
@@ -332,7 +332,6 @@ class NeedleDriver(object):
     def prepare_window(self, width, height):
         self.driver.set_window_size(width, height)
         self.clear_site()
-        time.sleep(1)
 
     def assert_screenshot(self, file_path, element_or_selector=None, threshold=0, exclude=None):
         """Fail if new fresh image is too dissimilar from the baseline image
@@ -371,7 +370,8 @@ class NeedleDriver(object):
         # Compare images
         if isinstance(baseline_image, basestring):
             # try:
-            value = self.engine.assertSameFiles(fresh_image_file, baseline_image, threshold)
+            value, output_width, output_height, baseline_width, baseline_height = self.engine.assertSameFiles(
+                fresh_image_file, baseline_image, threshold)
             if isinstance(value, float):
                 # if value <= threshold:
                 #     par_dif = Path(fresh_image_file)
@@ -380,10 +380,23 @@ class NeedleDriver(object):
                 #         os.remove(os.path.join(par_dif.parent, f))
                 #     return
                 # else:
-                raise AssertionError("The new screenshot did not match the baseline. Diff: {difference}."
-                                     .format(difference=str(value * 100)))
+                raise AssertionError("The new screenshot did not match the baseline. Diff: {difference}. "
+                                     "output_width: {output_width}, output_height: {output_height}, "
+                                     "baseline_width: {baseline_width}, baseline_height: {baseline_height}"
+                                     .format(difference=str(value * 100),
+                                             output_width=output_width,
+                                             output_height=output_height,
+                                             baseline_width=baseline_width,
+                                             baseline_height=baseline_height))
             else:
-                raise AssertionError(value)
+                raise AssertionError("Error {difference}. "
+                                     "output_width: {output_width}, output_height: {output_height}, "
+                                     "baseline_width: {baseline_width}, baseline_height: {baseline_height}"
+                                     .format(difference=str(value),
+                                             output_width=output_width,
+                                             output_height=output_height,
+                                             baseline_width=baseline_width,
+                                             baseline_height=baseline_height))
             # if self.cleanup_on_success:
             #     os.remove(fresh_image_file)
         else:
