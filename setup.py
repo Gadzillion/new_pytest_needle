@@ -21,12 +21,11 @@ setuptools.setup(name='new_pytest_needle',
                  keywords=['pytest-needle', 'imagemagick', 'VT'],
                  packages=setuptools.find_packages(),
                  install_requires=[
-                     'PIL',
+                     'Pillow',
                      'pytest',
-                     'allure',
-                     'selenium',
                      'pytest-selenium',
-                     'allure-pytest',
+                     'selenium',
+                     'allure-pytest'
                  ],
                  python_requires=">=3.6",
                  classifiers=[
