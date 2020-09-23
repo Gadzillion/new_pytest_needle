@@ -10,7 +10,7 @@ with open("README.md", "r") as fh:
     long_description = fh.read()
 
 setuptools.setup(name='new_pytest_needle',
-                 version='0.0.7',
+                 version='0.0.8',
                  author='P.Serega',
                  author_email='serjojo1@gmail.com',
                  description='VT pytest + selenium',

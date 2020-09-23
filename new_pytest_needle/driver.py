@@ -198,26 +198,6 @@ class NeedleDriver(object):
         self.options['baseline_dir'] = value
 
     @property
-    def cleanup_on_success(self):
-        """Returns True, if cleanup on success flag is set
-
-        :return:
-        :rtype: bool
-        """
-
-        return self.options.get('cleanup_on_success', True)
-
-    @cleanup_on_success.setter
-    def cleanup_on_success(self, value):
-        """Set cleanup on success flag
-
-        :param bool value: Cleanup on success flag
-        :return:
-        """
-
-        self.options['cleanup_on_success'] = bool(value)
-
-    @property
     def engine(self):
         """Return image processing engine
 
@@ -397,8 +377,6 @@ class NeedleDriver(object):
                                              output_height=output_height,
                                              baseline_width=baseline_width,
                                              baseline_height=baseline_height))
-            # if self.cleanup_on_success:
-            #     os.remove(fresh_image_file)
         else:
             diff = ImageDiff(fresh_image, baseline_image)
             distance = abs(diff.get_distance())
