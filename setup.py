@@ -10,7 +10,7 @@ with open("README.md", "r") as fh:
     long_description = fh.read()
 
 setuptools.setup(name='new_pytest_needle',
-                 version='0.0.8',
+                 version='0.1.0',
                  author='P.Serega',
                  author_email='serjojo1@gmail.com',
                  description='VT pytest + selenium',
@@ -21,12 +21,11 @@ setuptools.setup(name='new_pytest_needle',
                  keywords=['pytest-needle', 'imagemagick', 'VT'],
                  packages=setuptools.find_packages(),
                  install_requires=[
-                     'PIL',
+                     'Pillow',
                      'pytest',
-                     'allure',
-                     'selenium',
                      'pytest-selenium',
-                     'allure-pytest',
+                     'selenium',
+                     'allure-pytest'
                  ],
                  python_requires=">=3.6",
                  classifiers=[
