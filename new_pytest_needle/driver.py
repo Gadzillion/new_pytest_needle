@@ -349,25 +349,24 @@ class NeedleDriver(object):
 
         # Compare images
         if isinstance(baseline_image, basestring):
-            # try:
             value, output_width, output_height, baseline_width, baseline_height = self.engine.assertSameFiles(
                 fresh_image_file, baseline_image, threshold)
             if isinstance(value, float):
-                # if value <= threshold:
-                #     par_dif = Path(fresh_image_file)
-                #     filelist = [f for f in os.listdir(par_dif.parent) if f.endswith(".png")]
-                #     for f in filelist:
-                #         os.remove(os.path.join(par_dif.parent, f))
-                #     return
-                # else:
-                raise AssertionError("The new screenshot did not match the baseline. Diff: {difference}. "
-                                     "output_width: {output_width}, output_height: {output_height}, "
-                                     "baseline_width: {baseline_width}, baseline_height: {baseline_height}"
-                                     .format(difference=str(value * 100),
-                                             output_width=output_width,
-                                             output_height=output_height,
-                                             baseline_width=baseline_width,
-                                             baseline_height=baseline_height))
+                if value <= threshold:
+                    par_dif = pathlib.Path(fresh_image_file)
+                    filelist = [f for f in os.listdir(par_dif.parent) if f.endswith(".png")]
+                    for f in filelist:
+                        os.remove(os.path.join(par_dif.parent, f))
+                    return
+                else:
+                    raise AssertionError("The new screenshot did not match the baseline. Diff: {difference}. "
+                                         "output_width: {output_width}, output_height: {output_height}, "
+                                         "baseline_width: {baseline_width}, baseline_height: {baseline_height}"
+                                         .format(difference=str(value * 100),
+                                                 output_width=output_width,
+                                                 output_height=output_height,
+                                                 baseline_width=baseline_width,
+                                                 baseline_height=baseline_height))
             else:
                 raise AssertionError("Error {difference}. "
                                      "output_width: {output_width}, output_height: {output_height}, "
