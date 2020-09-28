@@ -6,7 +6,7 @@ from PIL import Image
 class Engine(EngineBase):
     compare_path = "magick compare"
     compare_command = (
-        "{compare} -metric RMSE -subimage-search -dissimilarity-threshold 1.0 {baseline} {new} {diff}"
+        "{compare} -metric rmse -subimage-search -dissimilarity-threshold 1 {baseline} {new} {diff}"
     )
 
     def assertSameFiles(self, output_file, baseline_file, threshold=0):
