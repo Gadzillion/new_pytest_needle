@@ -425,7 +425,7 @@ class NeedleDriver(object):
             lang = "&lang=" + lang
         else:
             lang = "/?lang=" + lang
-        self.driver.get(f"{cfg['web']['url']}{link}{lang}")
+        self.driver.get(f"{cfg['web']['url']}{link}{lang}&no_eu_overlay=true")
         self._wait_for_load()
 
     @allure.step('Открываем страницу {page}')
