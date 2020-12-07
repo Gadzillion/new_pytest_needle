@@ -16,7 +16,7 @@ class Engine(EngineBase):
         output_width, output_height = output_img.size
         baseline_width, baseline_height = baseline_img.size
 
-        if baseline_width > output_width:
+        if baseline_height > output_height:
             baseline_file = baseline_file
             output_file = output_file
         else:

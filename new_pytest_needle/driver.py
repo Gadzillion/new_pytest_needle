@@ -420,14 +420,15 @@ class NeedleDriver(object):
         else:
             raise e
 
-    @allure.step('Открываем страницу "{link}" на языке "{lang}"')
-    def open_site_page_with_lang(self, cfg, link: str, lang: str):
-        if '?ltr' in link:
+    @allure.step(f'Открываем страницу')
+    def open_site_page_with_lang(self, cfg, link: str, lang: str = "en"):
+        if '?' in link:
             lang = "&lang=" + lang
         else:
             lang = "/?lang=" + lang
         self.driver.get(f"{cfg['web']['url']}{link}{lang}")
         self._wait_for_load()
+
 
     @allure.step('Открываем страницу {page}')
     def print_url(self, page):

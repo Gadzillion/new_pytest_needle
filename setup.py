@@ -5,12 +5,14 @@
 """
 
 import setuptools
+from new_pytest_needle.__init__ import __version__
+
 
 with open("README.md", "r") as fh:
     long_description = fh.read()
 
 setuptools.setup(name='new_pytest_needle',
-                 version='0.1.0',
+                 version=__version__,
                  author='P.Serega',
                  author_email='serjojo1@gmail.com',
                  description='VT pytest + selenium',
